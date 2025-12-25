@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="ml">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voter List Preview</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Malayalam:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Noto Sans Malayalam', sans-serif;
+        }
+        .voter-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen text-gray-800">
+
+    <div class="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
+        
+        <!-- Header -->
+        <header class="mb-8 bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+            <h1 class="text-3xl font-bold text-blue-900 mb-2">വോട്ടർ പട്ടിക / Voter List</h1>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm text-gray-600 mt-4">
+                <div class="bg-blue-50 p-3 rounded">
+                    <span class="font-semibold block text-blue-800">Constituency:</span>
+                    63 - Guruvayur (General)
+                </div>
+                <div class="bg-blue-50 p-3 rounded">
+                    <span class="font-semibold block text-blue-800">Part No:</span>
+                    74
+                </div>
+                <div class="bg-blue-50 p-3 rounded">
+                    <span class="font-semibold block text-blue-800">Section:</span>
+                    1-Kochannur Part 1
+                </div>
+            </div>
+        </header>
+
+        <!-- Search -->
+        <div class="mb-6 relative">
+            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <svg class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+            </div>
+            <input type="text" id="searchInput" onkeyup="filterTable()" 
+                class="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm shadow-sm" 
+                placeholder="Search by Name, Voter ID, or House Name... (പേര് അല്ലെങ്കിൽ തിരിച്ചറിയൽ കാർഡ് നമ്പർ)">
+        </div>
+
+        <!-- Desktop Table View (Hidden on Mobile) -->
+        <div class="hidden md:block overflow-x-auto bg-white rounded-lg shadow border border-gray-200">
+            <table class="min-w-full divide-y divide-gray-200" id="voterTable">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Sl. No</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name (പേര്)</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Relation (ബന്ധപ്പെട്ട ആൾ)</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">House Name (വീട്ടുപേര്)</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Age/Sex</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Voter ID</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200 text-sm">
+                    <!-- Rows will be populated by JS -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Mobile Card View (Hidden on Desktop) -->
+        <div class="md:hidden space-y-4" id="mobileCards">
+            <!-- Cards will be populated by JS -->
+        </div>
+        
+        <div id="noResults" class="hidden text-center py-8 text-gray-500">
+            No matching records found.
+        </div>
+
+        <div class="mt-4 text-xs text-gray-400 text-center">
+            Showing extracted data entries 1-50
+        </div>
+    </div>
+
+    <script>
+        const voterData = [
+            { sl: 1, name: "സഫിയ", relation: "അമ്മ: നഫീസ", house: "6/319 കൊമ്പത്ത്", age: 68, gender: "F", id: "XOV0981431" },
+            { sl: 2, name: "നൌഷാദ് കെ ഐ", relation: "അച്ഛൻ: ഇബ്രാഹീം", house: "06/0 കൊന്‌പത്ത് ഹൗസ്", age: 48, gender: "M", id: "XOV1873165" },
+            { sl: 3, name: "ഷമീറ പി എ", relation: "ഭർത്താവ്: നൗഷാദ്", house: "കൊമ്പത്ത് ഹൗസ്", age: 44, gender: "F", id: "XOV1867399" },
+            { sl: 4, name: "സനാന നസ്രിൻ കെ എൻ", relation: "അച്ഛൻ: നൌഷാദ് കെ ഐ", house: "കൊമ്പത്ത്", age: 20, gender: "F", id: "XOV1872373" },
+            { sl: 5, name: "ഷാനില", relation: "ഭർത്താവ്: ഉബൈദുള്ള", house: "3/348 ടി ടി ഹൗസ്", age: 48, gender: "F", id: "KRV1204437" },
+            { sl: 6, name: "ജിജി ദേവരാജ്", relation: "ഭർത്താവ്: നിജു ഇ കെ", house: "/ 389", age: 34, gender: "F", id: "XOV0835736" },
+            { sl: 7, name: "ഹസ്ത കെ എച്ച്", relation: "ഭർത്താവ്: ഷബീർ എം എച്ച്", house: "/ മഠത്തിലകായിൽ", age: 32, gender: "F", id: "XOV0844241" },
+            { sl: 8, name: "അൻഷിയ കെ", relation: "ഭർത്താവ്: കമാലുദ്ദീൻ", house: "5/298, പതിയാരത്തയിൽ", age: 29, gender: "F", id: "XOV0837617" },
+            { sl: 9, name: "നിഖേഷ വി കെ", relation: "അച്ഛൻ: കുഞ്ഞുമോൻ", house: "5/202, വാക്കയിൽ", age: 28, gender: "M", id: "XOV0836791" },
+            { sl: 10, name: "അക്ഷയ് ടി എസ്", relation: "അച്ഛൻ: സുബ്രമണ്യൻ", house: "6/ തറയിൽ", age: 27, gender: "M", id: "XOV0845354" },
+            { sl: 11, name: "അഖില കെ സുബ്രമണ്യൻ", relation: "അച്ഛൻ: സുബ്രമണ്യൻ കെ എം", house: "4/ കൊച്ചന്നൂർ", age: 26, gender: "F", id: "XOV0845354" },
+            { sl: 12, name: "അബ്ദുൽ കാദർ കെ പി", relation: "അച്ഛൻ: മൊയ്തുണ്ണി", house: "5/139 കേശവത്ത് പറമ്പിൽ", age: 78, gender: "M", id: "XOV0416867" },
+            { sl: 13, name: "മുനവ്വറ", relation: "ഭർത്താവ്: അബ്ദുൽ കാദർ", house: "5/139 കേശവത്ത് പറമ്പിൽ", age: 65, gender: "F", id: "XOV0416883" },
+            { sl: 14, name: "അബ്ദുൽ ഗഫൂർ", relation: "അച്ഛൻ: സെയ്തു മുഹമ്മദ്", house: "3/2 കേശവത്ത് പറമ്പിൽ", age: 53, gender: "M", id: "LJV1248129" },
+            { sl: 15, name: "റംലാബീവി കെ ടി", relation: "ഭർത്താവ്: അബ്ദുൽ ഗഫൂർ", house: "5/2 കേശവത്ത് പറമ്പിൽ", age: 50, gender: "F", id: "XOV0328161" },
+            { sl: 16, name: "സൈനബ", relation: "ഭർത്താവ്: ആലിക്കുട്ടി", house: "573 തറയിൽ", age: 78, gender: "F", id: "XOV0239004" },
+            { sl: 17, name: "റഷിദ്", relation: "അമ്മ: സൈനബ", house: "5/4 തറയിൽ", age: 53, gender: "M", id: "LJV1765155" },
+            { sl: 18, name: "ഷഫീക് ടി എം", relation: "അമ്മ: സൈനബ", house: "3/4 തറയിൽ", age: 40, gender: "M", id: "XOV0750042" },
+            { sl: 19, name: "സക്കീന", relation: "ഭർത്താവ്: റഷിദ്", house: "5/145 തറയിൽ", age: 40, gender: "F", id: "XOV0693580" },
+            { sl: 20, name: "പാത്തുമ്മ", relation: "ഭർത്താവ്: കുഞ്ഞിമോൻ", house: "5/146 പട്ടത്തുവളപ്പിൽ", age: 72, gender: "F", id: "LJV1531607" },
+            { sl: 21, name: "അബ്ദുൾ മുത്തലിബ്", relation: "അച്ഛൻ: കുഞ്ഞിമോൻ", house: "3/5 വലിയവീട്ടിൽ", age: 48, gender: "M", id: "XOV1271790" },
+            { sl: 22, name: "നൌഷാദ്", relation: "അച്ഛൻ: കുഞ്ഞിമോൻ", house: "3/5 വലിയവീട്ടിൽ", age: 44, gender: "M", id: "XOV0223776" },
+            { sl: 23, name: "ഷെക്കില", relation: "ഭർത്താവ്: അബ്ദുൾ മുത്തലിബ്", house: "3/5 പട്ടത്ത് വളപ്പിൽ", age: 42, gender: "F", id: "GYD1422633" },
+            { sl: 24, name: "സജന പി എ", relation: "ഭർത്താവ്: നൗഷാദ്", house: "5/146 പട്ടത്തുവളപ്പിൽ", age: 41, gender: "F", id: "XOV1270685" },
+            { sl: 25, name: "കദീജ", relation: "അച്ഛൻ: മുഹമ്മദ്", house: "3/11 കുന്നുംക്കാട്ടിൽ", age: 65, gender: "F", id: "XOV0827188" },
+            { sl: 26, name: "മുഹമ്മദ് ഇക്ബാൽ പി എ", relation: "അച്ഛൻ: അബ്ദുള്ളക്കുട്ടി", house: "5/181 കുന്നുക്കാട്ടിൽ", age: 51, gender: "M", id: "LJV1140508" },
+            { sl: 27, name: "മുഹമ്മദ് സാലിഹ്", relation: "അച്ഛൻ: അബ്ദുള്ളക്കുട്ടി", house: "5/149 പണിക്കവീട്ടിൽ", age: 43, gender: "M", id: "LJV1138379" },
+            { sl: 28, name: "മുഹായുദ്ദീൻ", relation: "അമ്മ: കദീജ", house: "3/11 കുന്നുകാട്ടിൽ", age: 43, gender: "M", id: "XOV0728998" },
+            { sl: 29, name: "ഷെറീന", relation: "ഭർത്താവ്: ഇക്ബാൽ", house: "5/181 കുന്നുംക്കാട്ടിൽ", age: 41, gender: "F", id: "LJV1643501" },
+            { sl: 30, name: "ഉമ്മർ", relation: "അമ്മ: കദീജ", house: "3/11 കുന്നുകാട്ടിൽ", age: 39, gender: "M", id: "XOV0233551" },
+            { sl: 31, name: "റസീന", relation: "ഭർത്താവ്: മുഹായുദ്ദീൻ", house: "3/11 കുന്നുകാട്ടിൽ", age: 36, gender: "F", id: "XOV0183400" },
+            { sl: 32, name: "റെബിത", relation: "ഭർത്താവ്: മുഹമ്മദ് സാലിഹ്", house: "5/149 പണിക്കവീട്ടിൽ", age: 35, gender: "F", id: "XOV0818864" },
+            { sl: 33, name: "തസ്തിയ", relation: "ഭർത്താവ്: ഉമ്മർ", house: "4/149 പണിക്കവീട്ടിൽ", age: 30, gender: "F", id: "XOV1270438" },
+            { sl: 34, name: "സുഹറ", relation: "അച്ഛൻ: മുഹമ്മദ്", house: "3/7 ഇത്തിതറയിൽ", age: 61, gender: "F", id: "XOV1270032" },
+            { sl: 35, name: "ആസിഫ് അലി", relation: "അച്ഛൻ: മുഹമ്മദ്", house: "5/63 ഇത്തിതറയിൽ", age: 37, gender: "M", id: "LJV1726835" },
+            { sl: 36, name: "അസ്മ‌ പി യു", relation: "ഭർത്താവ്: ആസിഫ് അലി", house: "5/148 ഇത്തിതറയിൽ", age: 30, gender: "F", id: "XOV0681585" },
+            { sl: 37, name: "അയിസുമ്മ", relation: "അച്ഛൻ: കുഞ്ഞിമോൻ", house: "3/8 ആഞ്ഞിലക്കടവത്ത്", age: 73, gender: "F", id: "XOV0485888" },
+            { sl: 38, name: "അബ്ദുൽ റസ്സാക്ക്", relation: "അച്ഛൻ: കുഞ്ഞിമോൻ", house: "5/152 അങ്ങലകടവത്ത്", age: 60, gender: "M", id: "XOV0680520" },
+            { sl: 39, name: "ഫാത്തിമ", relation: "ഭർത്താവ്: അബ്ദുൽ റസ്സാക്ക്", house: "5/152 ആഞ്ഞിലകടവത്ത് ഹൗസ്", age: 54, gender: "F", id: "XOV1270073" },
+            { sl: 40, name: "മുസ്തഫ", relation: "അച്ഛൻ: കുഞ്ഞിമോൻ", house: "3/8 ആഞ്ഞിലക്കടവത്ത്", age: 45, gender: "M", id: "LJV1233063" },
+            { sl: 41, name: "അഷറഫ്", relation: "അച്ഛൻ: കുഞ്ഞിമോൻ", house: "3/8 ആഞ്ഞിലകടവത്ത്", age: 43, gender: "M", id: "LJV1614221" },
+            { sl: 42, name: "മുഹമ്മദ് ഫസീർ", relation: "അച്ഛൻ: കുഞ്ഞിമുഹമ്മദ്", house: "3/8 ആഞ്ഞിലകടവത്ത്", age: 39, gender: "M", id: "XOV0750133" },
+            { sl: 43, name: "ജാസ്മിൻ", relation: "ഭർത്താവ്: മുഹമ്മദ് ഫസീർ", house: "5/151 ആഞ്ഞിലകടവത്ത്", age: 29, gender: "F", id: "XOV1271287" },
+            { sl: 44, name: "പാത്തുമ്മ", relation: "അച്ഛൻ: അബൂബക്കർ", house: "3/12 പട്ടത്ത് വളപ്പിൽ", age: 70, gender: "F", id: "XOV0750018" },
+            { sl: 45, name: "ഫൈസൽ", relation: "അമ്മ: പാത്തുമ്മ", house: "5/153 പട്ടത്ത് വളപ്പിൽ", age: 48, gender: "M", id: "XOV0492397" },
+            { sl: 46, name: "നസീമ", relation: "ഭർത്താവ്: ഫസൽ", house: "5/153 പട്ടത്ത് വളപ്പിൽ", age: 39, gender: "F", id: "LJV1053198" },
+            { sl: 47, name: "മുഹമ്മദ് എ കെ", relation: "അമ്മ: ഖദിജ", house: "ആഞ്ഞിലകടവത്ത്", age: 68, gender: "M", id: "XOV1270057" },
+            { sl: 48, name: "മെഹറ മുഹമ്മദ്", relation: "അച്ഛൻ: മുഹമ്മദ്", house: "ആഞ്ഞിലകടവത്ത്", age: 54, gender: "F", id: "XOV0581264" },
+            { sl: 49, name: "മൊയ്തുട്ടി", relation: "അച്ഛൻ: മാതരി", house: "5/144 തണ്ണീർകോട്ടിൽ", age: 66, gender: "M", id: "XOV1271451" },
+            { sl: 50, name: "സുലൈഖ", relation: "അച്ഛൻ: മൊയ്തുട്ടി", house: "3/14 തണ്ണീർക്കോട്ടിൽ", age: 51, gender: "F", id: "XOV0138446" }
+        ];
+
+        function renderTable(data) {
+            const tableBody = document.querySelector('#voterTable tbody');
+            const mobileCards = document.getElementById('mobileCards');
+            const noResults = document.getElementById('noResults');
+
+            tableBody.innerHTML = '';
+            mobileCards.innerHTML = '';
+
+            if (data.length === 0) {
+                noResults.classList.remove('hidden');
+                return;
+            } else {
+                noResults.classList.add('hidden');
+            }
+
+            data.forEach(item => {
+                const genderClass = item.gender === 'F' ? 'bg-pink-100 text-pink-800' : 'bg-blue-100 text-blue-800';
+                
+                // Desktop Row
+                const row = `
+                    <tr class="hover:bg-gray-50 transition-colors">
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 font-mono">${item.sl}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${item.name}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${item.relation}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${item.house}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            ${item.age} / <span class="${genderClass} px-2 inline-flex text-xs leading-5 font-semibold rounded-full">${item.gender}</span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-mono text-gray-600 select-all">${item.id}</td>
+                    </tr>
+                `;
+                tableBody.insertAdjacentHTML('beforeend', row);
+
+                // Mobile Card
+                const card = `
+                    <div class="bg-white rounded-lg shadow p-4 border border-gray-100 voter-card transition-all">
+                        <div class="flex justify-between items-start mb-2">
+                            <div>
+                                <span class="text-xs font-mono text-gray-400">#${item.sl}</span>
+                                <h3 class="text-lg font-bold text-gray-900">${item.name}</h3>
+                            </div>
+                            <span class="${genderClass} px-2 py-1 text-xs font-semibold rounded-full">${item.gender} / ${item.age}</span>
+                        </div>
+                        <div class="space-y-1 text-sm text-gray-600">
+                            <p class="flex items-center gap-2"><span class="w-4 h-4 text-gray-400">🏠</span> ${item.house}</p>
+                            <p class="flex items-center gap-2"><span class="w-4 h-4 text-gray-400">🔗</span> ${item.relation}</p>
+                            <p class="flex items-center gap-2 mt-2 pt-2 border-t border-gray-100">
+                                <span class="font-mono text-xs bg-gray-100 px-2 py-1 rounded text-gray-600">ID: ${item.id}</span>
+                            </p>
+                        </div>
+                    </div>
+                `;
+                mobileCards.insertAdjacentHTML('beforeend', card);
+            });
+        }
+
+        function filterTable() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            const filteredData = voterData.filter(item => 
+                item.name.toLowerCase().includes(query) || 
+                item.id.toLowerCase().includes(query) ||
+                item.house.toLowerCase().includes(query) ||
+                item.sl.toString().includes(query)
+            );
+            renderTable(filteredData);
+        }
+
+        // Initial Render
+        renderTable(voterData);
+
+    </script>
+</body>
+</html>
