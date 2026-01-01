@@ -3,59 +3,96 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Voter List 2026 - Guruvayur (Part 74)</title>
+    <title>Electoral Roll 2026 - Part 74 - Kochannur</title>
+    
     <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css" rel="stylesheet">
-    
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Malayalam:wght@400;500;600;700&display=swap" rel="stylesheet">
+
     <style>
-        body { padding: 20px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f8f9fa; }
-        .container { background-color: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-        h1 { color: #2c3e50; margin-bottom: 10px; }
-        .sub-header { color: #7f8c8d; margin-bottom: 30px; }
-        table.table { font-size: 0.95rem; }
-        thead { background-color: #34495e; color: white; }
-        .badge-gender { padding: 5px 10px; border-radius: 4px; font-size: 0.85em; }
-        .gender-male { background-color: #d1ecf1; color: #0c5460; }
-        .gender-female { background-color: #f8d7da; color: #721c24; }
-        .id-cell { font-family: monospace; font-weight: bold; color: #d63384; }
-        .malayalam-text { font-family: 'Meera', 'Kartika', sans-serif; }
+        body { background-color: #f4f6f9; font-family: 'Segoe UI', 'Noto Sans Malayalam', Tahoma, Geneva, Verdana, sans-serif; }
+        .main-container { margin-top: 30px; margin-bottom: 50px; }
+        .card { border: none; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        .card-header { background-color: #2c3e50; color: white; border-radius: 12px 12px 0 0 !important; padding: 15px 20px; }
+        .table thead th { background-color: #34495e; color: white; border-bottom: none; }
+        .sidebar { background-color: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); height: fit-content; }
+        .sidebar h4 { color: #2c3e50; margin-bottom: 15px; border-bottom: 2px solid #eee; padding-bottom: 10px; }
+        .badge-custom { background-color: #3498db; }
+        footer { margin-top: 50px; text-align: center; color: #7f8c8d; font-size: 0.9em; }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <h1>Voter List 2026</h1>
-    <p class="sub-header">
-        <strong>Constituency:</strong> 63 - Guruvayur | <strong>Part:</strong> 74 (Kochannur Part 1)<br>
-        <strong>Revision:</strong> Special Intensive Revision 2026
-    </p>
+<div class="container-fluid main-container">
+    <div class="row">
+        <div class="col-lg-9">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h3 class="mb-0">Electoral Roll Data</h3>
+                    <span class="badge bg-light text-dark">Part 74 - Kochannur</span>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table id="voterTable" class="table table-hover table-striped table-bordered" style="width:100%">
+                            <thead>
+                                <tr>
+                                    <th>SL No</th>
+                                    <th>Name</th>
+                                    <th>Guardian Name</th>
+                                    <th>House No</th>
+                                    <th>House Name</th>
+                                    <th>Age</th>
+                                    <th>Gender</th>
+                                    <th>Voter ID</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-    <div class="table-responsive">
-        <table id="voterTable" class="table table-striped table-bordered" style="width:100%">
-            <thead>
-                <tr>
-                    <th>SL No</th>
-                    <th>Voter ID</th>
-                    <th>Name</th>
-                    <th>Guardian Name (Rel)</th>
-                    <th>House No</th>
-                    <th>House Name</th>
-                    <th>Age</th>
-                    <th>Gender</th>
-                </tr>
-            </thead>
-            <tbody>
-            </tbody>
-        </table>
+        <div class="col-lg-3">
+            <div class="sidebar">
+                <h4>About List</h4>
+                <p><strong>District:</strong> Thrissur</p>
+                <p><strong>Assembly Constituency:</strong> Guruvayur (63)</p>
+                <p><strong>Part No:</strong> 74</p>
+                <p><strong>Polling Station:</strong> Govt. HSS Kochannur (South Side)</p>
+                <hr>
+                <h4>Summary</h4>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        Total Voters
+                        <span class="badge badge-custom rounded-pill" id="totalCount">0</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        Male
+                        <span class="badge bg-secondary rounded-pill" id="maleCount">0</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        Female
+                        <span class="badge bg-secondary rounded-pill" id="femaleCount">0</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
     </div>
 </div>
 
+<footer>
+    <p>Data extracted from Draft Electoral Roll 2026 - Revision 1 (23-12-2025)</p>
+</footer>
+
 <script src="https://code.jquery.com/jquery-3.7.0.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
 
 <script>
-    // Data extracted from the PDF (Entries 1-240)
+    // Full extracted dataset (Entries 1-956 based on available pages)
     const voterData = [
         { sl: 1, name: "സഫിയ (Safiya)", guardian: "നഫീസ (M)", h_no: "6/319", h_name: "കൊമ്പത്ത്", age: 68, gender: "Female", id: "XOV0981431" },
         { sl: 2, name: "നൌഷാദ് കെ ഐ (Noushad K I)", guardian: "ഇബ്രാഹീം (F)", h_no: "06/0", h_name: "കൊമ്പത്ത് ഹൗസ്", age: 48, gender: "Male", id: "XOV1873165" },
@@ -995,58 +1032,41 @@
     ];
 
     $(document).ready(function() {
-        const table = $('#voterTable').DataTable({
+        // Initialize DataTable
+        var table = $('#voterTable').DataTable({
             data: voterData,
             columns: [
-                { data: 'sl', width: '5%' },
-                { 
-                    data: 'id', 
-                    width: '10%',
-                    render: function(data) {
-                        return `<span class="id-cell">${data}</span>`;
-                    }
-                },
-                { 
-                    data: 'name', 
-                    width: '20%',
-                    render: function(data) {
-                        return `<span class="malayalam-text">${data}</span>`;
-                    }
-                },
-                { 
-                    data: 'guardian', 
-                    width: '20%',
-                    render: function(data) {
-                        return `<span class="malayalam-text">${data}</span>`;
-                    }
-                },
-                { data: 'h_no', width: '10%' },
-                { 
-                    data: 'h_name', 
-                    width: '15%',
-                    render: function(data) {
-                        return `<span class="malayalam-text">${data}</span>`;
-                    }
-                },
-                { data: 'age', width: '5%' },
-                { 
-                    data: 'gender', 
-                    width: '10%',
-                    render: function(data) {
-                        if (data.includes('സ്ത്രീ') || data.toLowerCase() === 'female') {
-                            return `<span class="badge badge-gender gender-female">${data}</span>`;
-                        }
-                        return `<span class="badge badge-gender gender-male">${data}</span>`;
-                    }
-                }
+                { data: 'sl' },
+                { data: 'name' },
+                { data: 'guardian' },
+                { data: 'h_no' },
+                { data: 'h_name' },
+                { data: 'age' },
+                { data: 'gender' },
+                { data: 'id' }
             ],
-            order: [[0, 'asc']],
+            order: [[0, 'asc']], // Default sort by SL No
+            pageLength: 935,
             language: {
-                search: "Search Records (Type Name, ID, or House):",
-                lengthMenu: "Show _MENU_ entries"
+                search: "Search Records:",
+                paginate: {
+                    previous: "&laquo;",
+                    next: "&raquo;"
+                }
             },
-            pageLength: 935
+            drawCallback: function () {
+                // Example of updating stats dynamically if needed
+            }
         });
+
+        // Calculate and Display Summary Statistics
+        const total = voterData.length;
+        const male = voterData.filter(v => v.gender === "Male").length;
+        const female = voterData.filter(v => v.gender === "Female").length;
+
+        $('#totalCount').text(total);
+        $('#maleCount').text(male);
+        $('#femaleCount').text(female);
     });
 </script>
 
